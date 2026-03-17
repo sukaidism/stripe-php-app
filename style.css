@@ -342,3 +342,141 @@ body {
 		padding-right: 14px;
 	}
 }
+
+/* Result pages */
+.result-page {
+	margin: 0;
+	font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	color: #203147;
+	padding: 20px;
+}
+
+.result-page.success-page {
+	background: radial-gradient(circle at 10% 5%, #f2fff5 0%, transparent 35%), #f4f9f6;
+}
+
+.result-page.cancel-page {
+	background: radial-gradient(circle at 12% 8%, #fff8f1 0%, transparent 35%), #fff7f2;
+}
+
+.result-box {
+	background: #fff;
+	border-radius: 18px;
+	padding: 28px;
+	width: min(92vw, 560px);
+}
+
+.result-page.success-page .result-box {
+	border: 1px solid #d9e7dd;
+	box-shadow: 0 18px 40px rgba(32, 51, 71, 0.1);
+}
+
+.result-page.cancel-page .result-box {
+	border: 1px solid #f0dfd5;
+	box-shadow: 0 18px 40px rgba(74, 49, 34, 0.12);
+}
+
+.result-badge {
+	width: 56px;
+	height: 56px;
+	border-radius: 16px;
+	display: grid;
+	place-items: center;
+	font-size: 28px;
+	margin-bottom: 14px;
+}
+
+.result-page.success-page .result-badge {
+	background: #e9f8ee;
+	color: #1f7a39;
+}
+
+.result-page.cancel-page .result-badge {
+	background: #fff2e8;
+	color: #a55325;
+}
+
+.result-title {
+	margin: 0 0 8px;
+	font-size: 30px;
+}
+
+.result-page.success-page .result-title {
+	color: #1f7a39;
+}
+
+.result-page.cancel-page .result-title {
+	color: #a55325;
+}
+
+.result-lead {
+	margin: 0;
+	font-size: 15px;
+	color: #66758e;
+}
+
+.result-product {
+	margin-top: 18px;
+	padding: 12px;
+	border-radius: 12px;
+	background: #fffcfa;
+	border: 1px dashed #f0dfd5;
+}
+
+.result-label {
+	margin: 0 0 4px;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #6e7c93;
+}
+
+.result-value {
+	margin: 0;
+	font-weight: 700;
+}
+
+.result-actions {
+	margin-top: 18px;
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.result-btn {
+	text-decoration: none;
+	font-weight: 700;
+	font-size: 14px;
+	border-radius: 10px;
+	padding: 10px 14px;
+	border: none;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.result-btn.primary {
+	color: #fff;
+	background: linear-gradient(160deg, #ff8d4e, #ff5a18);
+}
+
+.result-page.success-page .result-btn.primary {
+	background: #1f7a39;
+}
+
+.result-btn.ghost {
+	color: #203147;
+	background: #fff;
+}
+
+.result-page.success-page .result-btn.ghost {
+	border: 1px solid #d9e7dd;
+}
+
+.result-page.cancel-page .result-btn.ghost {
+	border: 1px solid #f0dfd5;
+}

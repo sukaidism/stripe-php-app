@@ -11,139 +11,33 @@ $productName = trim((string) ($_GET['product_name'] ?? 'Selected Product'));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Canceled</title>
-    <style>
-        :root {
-            --warning: #a55325;
-            --warning-soft: #fff2e8;
-            --text: #203147;
-            --muted: #6e7c93;
-            --line: #f0dfd5;
-            --accent: #ff6a2b;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
-            background: radial-gradient(circle at 12% 8%, #fff8f1 0%, transparent 35%), #fff7f2;
-            display: grid;
-            place-items: center;
-            min-height: 100vh;
-            color: var(--text);
-            padding: 20px;
-        }
-
-        .box {
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 28px;
-            width: min(92vw, 560px);
-            box-shadow: 0 18px 40px rgba(74, 49, 34, 0.12);
-        }
-
-        .badge {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: grid;
-            place-items: center;
-            font-size: 28px;
-            background: var(--warning-soft);
-            color: var(--warning);
-            margin-bottom: 14px;
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            color: var(--warning);
-            font-size: 30px;
-        }
-
-        .lead {
-            margin: 0;
-            color: var(--muted);
-            font-size: 15px;
-        }
-
-        .product {
-            margin-top: 18px;
-            padding: 12px;
-            border: 1px dashed var(--line);
-            border-radius: 12px;
-            background: #fffcfa;
-        }
-
-        .label {
-            margin: 0 0 4px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--muted);
-        }
-
-        .value {
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .actions {
-            margin-top: 18px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .btn.primary {
-            color: #fff;
-            background: linear-gradient(160deg, #ff8d4e, #ff5a18);
-        }
-
-        .btn.ghost {
-            color: var(--text);
-            border: 1px solid var(--line);
-            background: #fff;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<div class="box">
-    <div class="badge">!</div>
-    <h1>Payment Cancelled</h1>
-    <p class="lead">You may try again anytime. No payment was charged.</p>
+<body class="result-page cancel-page">
+<div class="result-box">
+    <div class="result-badge">!</div>
+    <h1 class="result-title">Payment Cancelled</h1>
+    <p class="result-lead">You may try again anytime. No payment was charged.</p>
 
     <?php if ($productName !== ''): ?>
-        <div class="product">
-            <p class="label">Selected Product</p>
-            <p class="value"><?php echo htmlspecialchars($productName, ENT_QUOTES, 'UTF-8'); ?></p>
+        <div class="result-product">
+            <p class="result-label">Selected Product</p>
+            <p class="result-value"><?php echo htmlspecialchars($productName, ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
     <?php endif; ?>
 
-    <div class="actions">
+    <div class="result-actions">
         <?php if ($priceId !== ''): ?>
             <form action="checkout.php" method="post">
                 <input type="hidden" name="price_id" value="<?php echo htmlspecialchars($priceId, ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($productName, ENT_QUOTES, 'UTF-8'); ?>">
-                <button class="btn primary" type="submit">Retry Stripe Checkout</button>
+                <button class="result-btn primary" type="submit">Retry Stripe Checkout</button>
             </form>
         <?php endif; ?>
-        <a class="btn ghost" href="products.php">Back to Products</a>
+        <a class="result-btn ghost" href="products.php">Back to Products</a>
     </div>
 </div>
 </body>
