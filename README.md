@@ -32,16 +32,11 @@ git clone <your-repository-url>
 cd stripe-php-app
 
 Install the dependencies:
-
-```bash
 composer install
 
 Create your environment file:
-
-```bash
 cp .env.example .env
 
 Add Stripe keys in .env:
-```bash
 STRIPE_SECRET_KEY=your_secret_key_here
 STRIPE_PUBLISHABLE_KEY=your_publishable_key_here
