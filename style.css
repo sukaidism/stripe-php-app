@@ -46,10 +46,21 @@ body {
 }
 
 .brand-dot {
-	width: 12px;
-	height: 12px;
-	border-radius: 4px;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
 	background: linear-gradient(160deg, #ff8f52, #ff4f00);
+	color: #fff;
+}
+
+.brand-dot svg {
+	width: 18px;
+	height: 18px;
+	display: block;
+	fill: currentColor;
 }
 
 .menu-title {
@@ -70,6 +81,13 @@ body {
 	margin-bottom: 6px;
 	font-weight: 600;
 	text-decoration: none;
+	transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.menu-item:hover {
+	background: #fff2ec;
+	color: #ba3b0a;
+	transform: translateX(2px);
 }
 
 .menu-item.active {
@@ -82,6 +100,11 @@ body {
 	height: 7px;
 	border-radius: 50%;
 	background: #c8d0de;
+	transition: background-color 0.2s ease;
+}
+
+.menu-item:hover .menu-pill {
+	background: var(--accent);
 }
 
 .menu-item.active .menu-pill {
@@ -204,6 +227,7 @@ body {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 3;
+	line-clamp: 3;
 	overflow: hidden;
 }
 
@@ -235,7 +259,7 @@ body {
 	letter-spacing: 0.02em;
 	color: #fff;
 	cursor: pointer;
-	background: linear-gradient(160deg, #6b7bff, #3f53f6);
+	background: linear-gradient(160deg, #ff8d4e, #ff5a18);
 	transition: filter 0.2s ease, transform 0.2s ease;
 }
 

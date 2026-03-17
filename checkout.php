@@ -2,107 +2,61 @@
 
 declare(strict_types=1);
 
-$productId = $_GET['product_id'] ?? '';
-$productName = $_GET['product_name'] ?? 'Unknown product';
-$price = $_GET['price'] ?? 'No price set';
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Checkout Simulation</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-	<style>
-		body {
-			margin: 0;
-			font-family: 'Plus Jakarta Sans', sans-serif;
-			background: linear-gradient(180deg, #f6f9ff 0%, #eef2ff 100%);
-			color: #1f2b3d;
-			min-height: 100vh;
-			display: grid;
-			place-items: center;
-		}
+use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
+use Stripe\Price;
+use Stripe\Stripe;
 
-		.box {
-			width: min(92vw, 460px);
-			background: #fff;
-			border: 1px solid #e6ebf4;
-			border-radius: 18px;
-			padding: 24px;
-			box-shadow: 0 18px 36px rgba(30, 44, 71, 0.12);
-		}
+require __DIR__ . '/vendor/autoload.php';
 
-		h1 {
-			margin: 0 0 10px;
-			font-size: 24px;
-		}
+$config = require __DIR__ . '/config.php';
 
-		p {
-			margin: 8px 0;
-		}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: products.php', true, 303);
+    exit;
+}
 
-		.label {
-			color: #6b7690;
-			font-size: 12px;
-			text-transform: uppercase;
-			letter-spacing: 0.08em;
-		}
+$priceId = trim((string) ($_POST['price_id'] ?? ''));
+$productName = trim((string) ($_POST['product_name'] ?? 'Product'));
 
-		.value {
-			font-weight: 700;
-			font-size: 16px;
-		}
+if ($priceId === '') {
+    http_response_code(400);
+    echo 'Missing Stripe Price ID. This product cannot be checked out yet.';
+    exit;
+}
 
-		.actions {
-			display: flex;
-			gap: 10px;
-			margin-top: 18px;
-		}
+Stripe::setApiKey($config['secret_key']);
 
-		.btn {
-			padding: 10px 14px;
-			border-radius: 10px;
-			font-weight: 700;
-			border: none;
-			cursor: pointer;
-			text-decoration: none;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-		}
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$baseUrl = sprintf('%s://%s/stripe-php-app', $scheme, $host);
 
-		.btn.primary {
-			background: linear-gradient(160deg, #6b7bff, #3f53f6);
-			color: #fff;
-		}
+try {
+    $price = Price::retrieve($priceId);
+    $isRecurring = isset($price->recurring) && $price->recurring !== null;
+    $isMetered = $isRecurring
+        && isset($price->recurring->usage_type)
+        && $price->recurring->usage_type === 'metered';
 
-		.btn.secondary {
-			background: #f1f4fb;
-			color: #3c4a63;
-		}
-	</style>
-</head>
-<body>
-	<section class="box">
-		<h1>Checkout Simulation</h1>
-		<p>This is a sample checkout preview for your Stripe catalog flow.</p>
+    $lineItem = ['price' => $priceId];
 
-		<p class="label">Product</p>
-		<p class="value"><?php echo htmlspecialchars((string) $productName, ENT_QUOTES, 'UTF-8'); ?></p>
+    if (!$isMetered) {
+        $lineItem['quantity'] = 1;
+    }
 
-		<p class="label">Price</p>
-		<p class="value"><?php echo htmlspecialchars((string) $price, ENT_QUOTES, 'UTF-8'); ?></p>
+    $checkoutSession = Session::create([
+        'mode' => $isRecurring ? 'subscription' : 'payment',
+        'line_items' => [$lineItem],
+        'success_url' => $baseUrl . '/success.php?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => $baseUrl . '/cancel.php?price_id=' . urlencode($priceId) . '&product_name=' . urlencode($productName),
+        'metadata' => [
+            'product_name' => $productName,
+        ],
+    ]);
 
-		<p class="label">Product ID</p>
-		<p class="value"><?php echo htmlspecialchars((string) $productId, ENT_QUOTES, 'UTF-8'); ?></p>
-
-		<div class="actions">
-			<a class="btn secondary" href="products.php">Back to products</a>
-			<button class="btn primary" type="button">Pay now (demo)</button>
-		</div>
-	</section>
-</body>
-</html>
+    header('Location: ' . $checkoutSession->url, true, 303);
+    exit;
+} catch (ApiErrorException $exception) {
+    http_response_code(500);
+    echo 'Stripe checkout failed: ' . htmlspecialchars($exception->getMessage(), ENT_QUOTES, 'UTF-8');
+}

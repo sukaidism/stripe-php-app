@@ -60,7 +60,11 @@ function productImageUrl(mixed $product): string
 <div class="layout">
 	<aside class="sidebar">
 		<div class="brand">
-			<span class="brand-dot"></span>
+			<span class="brand-dot" aria-hidden="true">
+				<svg viewBox="0 0 24 24" role="img" focusable="false">
+					<path d="M5 4.8C5 3.81 5.81 3 6.8 3H19v15H7.2C6.43 18 5.75 18.3 5.25 18.78C5.09 18.94 5 19.13 5 19.35V4.8ZM7.2 20H20a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6.8A2.8 2.8 0 0 0 4 3.8V19.35C4 20.81 5.19 22 6.65 22H20v-2H7.2c-.66 0-1.2-.54-1.2-1.2s.54-1.2 1.2-1.2H20v-2H7.2c-.44 0-.86.09-1.25.26V4.8c0-.44.36-.8.8-.8H18v12H7.2a3.16 3.16 0 0 0-1.2.24V4.8Z" />
+				</svg>
+			</span>
 			<span>Bookla</span>
 		</div>
 
@@ -76,8 +80,8 @@ function productImageUrl(mixed $product): string
 		<section class="panel">
 			<header class="panel-header">
 				<div class="title-block">
-					<h1>Management Product</h1>
-					<p>Live records fetched from Stripe API.</p>
+					<h1>Products</h1>
+					<p>Experience checkout with Stripe Integration.</p>
 				</div>
 				<div class="header-actions">
 					<button class="action" type="button">Filter</button>
@@ -99,6 +103,9 @@ function productImageUrl(mixed $product): string
 						$checkoutProductId = (string) ($product->id ?? '');
 						$checkoutProductName = (string) ($product->name ?? 'Unnamed product');
 						$checkoutPrice = formatAmount($product->default_price ?? null);
+						$checkoutPriceId = is_object($product->default_price) && isset($product->default_price->id)
+							? (string) $product->default_price->id
+							: '';
 						?>
 						<article class="card" style="animation-delay: <?php echo ($index * 0.04); ?>s;">
 							<img
@@ -111,11 +118,14 @@ function productImageUrl(mixed $product): string
 								<div class="meta">
 									<span class="price"><?php echo htmlspecialchars($checkoutPrice, ENT_QUOTES, 'UTF-8'); ?></span>
 								</div>
-								<form class="checkout-form" action="checkout.php" method="get">
+								<form class="checkout-form" action="checkout.php" method="post">
+									<input type="hidden" name="price_id" value="<?php echo htmlspecialchars($checkoutPriceId, ENT_QUOTES, 'UTF-8'); ?>">
 									<input type="hidden" name="product_id" value="<?php echo htmlspecialchars($checkoutProductId, ENT_QUOTES, 'UTF-8'); ?>">
 									<input type="hidden" name="product_name" value="<?php echo htmlspecialchars($checkoutProductName, ENT_QUOTES, 'UTF-8'); ?>">
 									<input type="hidden" name="price" value="<?php echo htmlspecialchars($checkoutPrice, ENT_QUOTES, 'UTF-8'); ?>">
-									<button class="checkout-btn" type="submit">Checkout</button>
+									<button class="checkout-btn" type="submit" <?php echo $checkoutPriceId === '' ? 'disabled' : ''; ?>>
+										<?php echo $checkoutPriceId === '' ? 'No Stripe Price' : 'Checkout'; ?>
+									</button>
 								</form>
 							</div>
 						</article>
